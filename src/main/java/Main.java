@@ -11,7 +11,7 @@ public class Main {
     String command = args[0];
     if("decode".equals(command)) {
         String bencodedValue = args[1];
-        String decoded;
+        Object decoded;
         try {
           decoded = decodeBencode(bencodedValue);
         } catch(RuntimeException e) {
@@ -24,18 +24,24 @@ public class Main {
       }
 
   }
-
-  static String decodeBencode(String bencodedString) {
-    if (Character.isDigit(bencodedString.charAt(0))) {
+  static Object decodeBencode(String bencodedString) {
+    // 3:cat
+    if (Character.isDigit(bencodedString.charAt(0))) { //checks if first character is a digit
+      //first character in bencode usually tells us the length of the string
       int firstColonIndex = 0;
       for(int i = 0; i < bencodedString.length(); i++) { 
         if(bencodedString.charAt(i) == ':') {
-          firstColonIndex = i;
+          firstColonIndex = i; //find the colon that seperates the number from the actual string.
           break;
         }
       }
-      int length = Integer.parseInt(bencodedString.substring(0, firstColonIndex));
+      int length = Integer.parseInt(bencodedString.substring(0, firstColonIndex)); //extract length of string from the bencode
+      //ex: 3:cat, we get length = 3;
       return bencodedString.substring(firstColonIndex+1, firstColonIndex+1+length);
+      //returns the decoded bencode string, which would be in this case cat.
+    } else if (bencodedString.startsWith("i")) {
+      return Long.parseLong(
+        bencodedString.substring(1, bencodedString.indexOf("e")));
     } else {
       throw new RuntimeException("Only strings are supported at the moment");
     }
