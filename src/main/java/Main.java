@@ -1,5 +1,6 @@
 import com.google.gson.Gson;
 import com.dampcake.bencode.Bencode; //- available if you need it!
+import java.util.*;
 
 public class Main {
   private static final Gson gson = new Gson();
@@ -40,8 +41,28 @@ public class Main {
       return bencodedString.substring(firstColonIndex+1, firstColonIndex+1+length);
       //returns the decoded bencode string, which would be in this case cat.
     } else if (bencodedString.startsWith("i")) {
-      return Long.parseLong(
-        bencodedString.substring(1, bencodedString.indexOf("e")));
+      return Long.parseLong(bencodedString.substring(1, bencodedString.indexOf("e")));
+    } else if (bencodedString.startsWith("l")) {
+        ArrayList<Object> arr = new ArrayList<>();
+
+        for (int i = 1; i < bencodedString.length();i++) {
+          if (Character.isDigit(bencodedString.charAt(i))) {
+            int length = Integer.valueOf(i);
+            int sidx = i + 2; //starting index
+            int eidx = sidx + length; //ending index
+
+            String word = bencodedString.substring(sidx, eidx);
+            arr.add(word);
+          } else if (bencodedString.charAt(i) == 'i') {
+            arr.add(bencodedString.substring(i+1, bencodedString.indexOf('e', i)));
+
+          } else if (bencodedString.charAt(i) == 'l') {
+
+          } else if (bencodedString.charAt(i) == 'd') {
+
+          } 
+        } 
+        return arr;
     } else {
       throw new RuntimeException("Only strings are supported at the moment");
     }
