@@ -1,5 +1,8 @@
+import java.lang.invoke.WrongMethodTypeException;
+
 import com.google.gson.Gson;
 import com.dampcake.bencode.Bencode; //- available if you need it!
+
 import java.util.*;
 
 public class Main {
@@ -46,21 +49,18 @@ public class Main {
         ArrayList<Object> arr = new ArrayList<>();
 
         for (int i = 1; i < bencodedString.length();i++) {
-          if (Character.isDigit(bencodedString.charAt(i))) {
-            int length = Integer.valueOf(i);
-            int sidx = i + 2; //starting index
-            int eidx = sidx + length; //ending index
+          if (bencodedString.charAt(i) == 'i') {
+            arr.add(Long.parseLong(bencodedString.substring(i+1, bencodedString.indexOf('e', i))));
+            i = bencodedString.indexOf("e", i);
 
-            String word = bencodedString.substring(sidx, eidx);
-            arr.add(word);
-          } else if (bencodedString.charAt(i) == 'i') {
-            arr.add(bencodedString.substring(i+1, bencodedString.indexOf('e', i)));
-
+        } else if (Character.isDigit(bencodedString.charAt(i))) {
+            int colonIndex = bencodedString.indexOf(':', i);
+            int length = Integer.parseInt(bencodedString.substring(i, colonIndex));
+            arr.add(bencodedString.substring(colonIndex + 1, (colonIndex + 1) + length));
+            i = ((colonIndex + 1) + length) - 1;
           } else if (bencodedString.charAt(i) == 'l') {
-
-          } else if (bencodedString.charAt(i) == 'd') {
-
-          } 
+            
+          }
         } 
         return arr;
     } else {
