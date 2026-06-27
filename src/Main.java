@@ -1,10 +1,9 @@
-import java.lang.invoke.WrongMethodTypeException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
 
 import com.google.gson.Gson;
-import com.dampcake.bencode.Bencode; //- available if you need it!
-
-import java.util.*;
-
 
 public class Main {
   private static final Gson gson = new Gson();
@@ -24,6 +23,11 @@ public class Main {
           return;
         }
         System.out.println(gson.toJson(decoded));
+    } else if ("info".equals(command)) {
+        String torrentFile = Files.readString(Path.of(args[1]), StandardCharsets.ISO_8859_1); // reads path of torrent file
+        Object decoded = Bencode.decodeBencode(torrentFile);
+        TorrentParser parser = new TorrentParser();
+        TorrentParser.parseTorrent(decoded);
     } else {
         System.out.println("Unknown command: " + command);
       }
