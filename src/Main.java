@@ -5,6 +5,7 @@ import com.dampcake.bencode.Bencode; //- available if you need it!
 
 import java.util.*;
 
+
 public class Main {
   private static final Gson gson = new Gson();
   // Gson library to convert java objects to JSON and vice versa
@@ -28,6 +29,8 @@ public class Main {
       }
 
   }
+
+  
   static Object decodeBencode(String bencodedString) {
     // 3:cat
     if (Character.isDigit(bencodedString.charAt(0))) { //checks if first character is a digit
