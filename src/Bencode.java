@@ -1,11 +1,13 @@
-import java.lang.invoke.WrongMethodTypeException;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class Bencode {
     private final String input;
     private int pos = 0;
+    private boolean is_Key = true;
 
     private Bencode(String input) {
         this.input = input;
@@ -27,6 +29,10 @@ public class Bencode {
             return decodeList();
         }
 
+        if (current == 'd') {
+            return decodeDict();
+        }
+
         throw new RuntimeException("Unsupported bencode value");
     }
 
@@ -35,7 +41,7 @@ public class Bencode {
     // i<integer encoded in base ten ASCII>e
     private Object decodeInteger() {
         int end_index = input.indexOf('e', pos);
-        int value = Integer.parseInt(input.substring(pos + 1, end_index));
+        long value = Long.parseLong(input.substring(pos + 1, end_index));
 
         pos = end_index + 1;
 
@@ -54,7 +60,7 @@ public class Bencode {
         int end = start + length;
 
         pos = end;
-        
+
         return input.substring(colon_index+1, colon_index + 1 + length);
     }
 
@@ -71,6 +77,29 @@ public class Bencode {
 
         pos++;
         return arr;
+    }
+
+
+    // Decoding bencoded dictionaries
+    // Dictionaries are encoded as follows
+    // d<key1><value1>...<keyN><valueN>e. <key1>, <value1>
+    private Object decodeDict() {
+        /*
+        * d3:foo3:bar5"helloi52ee
+        *
+        */
+       
+       Map<Object, Object> dict = new HashMap<>();  
+       pos++;
+       
+       while (input.charAt(pos) != 'e') {
+        String key = (String) decodeString();
+        Object value = decodeNext();
+        dict.put(key, value);
+       }
+
+        pos++;
+        return dict;
     }
 
     public static Object decodeBencode(String bencodedString) {
