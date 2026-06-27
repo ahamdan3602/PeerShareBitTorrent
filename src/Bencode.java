@@ -88,7 +88,7 @@ public class Bencode {
         * d3:foo3:bar5"helloi52ee
         *
         */
-       
+
        Map<Object, Object> dict = new HashMap<>();  
        pos++;
        
@@ -101,6 +101,14 @@ public class Bencode {
         pos++;
         return dict;
     }
+
+    // init encodeInfo
+    // To Do: Bencode the contents of the info dictionary
+    // - Calculate the SHA-1 hash of this bencoded dictionary
+    private byte[] encodeInfo() {
+        return null;
+    }
+
 
     public static Object decodeBencode(String bencodedString) {
 
