@@ -109,6 +109,42 @@ public class Bencode {
         return null;
     }
 
+    public static Object encodeDict(Map decodedDict) {
+        try {
+            StringBuilder res = new StringBuilder("");
+            res.append("d:");
+            
+            System.out.println("MAP" + decodedDict);
+            
+            for (Object key : decodedDict.keySet()) {
+                String keyString = String.valueOf(key).length() + ":" + key;
+                Object val = decodedDict.get(key);
+           
+                res.append(keyString);
+                String str;
+              
+                if (val instanceof Character c 
+                    && Character.isDigit(c)) {
+                 
+                        str = "i:" + val + "e";
+                        res.append(str);
+
+                } else if (val instanceof String) {
+                 
+                    str = String.valueOf(val).length() + ":" + val;
+                    res.append(str);
+
+                } 
+            }
+            return res;
+
+        } catch (Exception e) {
+
+            System.err.println("failed to encode");
+            throw e;
+
+        }
+    }
 
     public static Object decodeBencode(String bencodedString) {
 
